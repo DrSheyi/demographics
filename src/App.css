@@ -1,38 +1,90 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
+  
+  padding: 3% 30%;
+  background-image: url("https://www.danceready.org/9238/files/ance-eady-screen60d5636b1af0c.jpeg");
+  
+   
+  }
+  
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    height: 40vmin;
+    pointer-events: none;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  
+  @media (max-width:1150px) {
+    #container {
+      width: 60vw;
+    }
+    .App{
+      padding: 3% 20%;
+    }
   }
-  to {
-    transform: rotate(360deg);
+  @media (max-width:800px) {
+    #container {
+      width: 80vw;
+    }
+    .App{
+      padding: 3% 10%;
+    }
   }
-}
+  @media (max-width:400px) {
+    #container {
+      width: 100vw;
+      border-radius: 0px;
+    }
+    .App{
+      padding: 0;
+    }
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  #container{
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    background-color: #fff;
+    
+  }
+  #form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10%;
+    
+    /* border: 1px solid black; */
+  
+  }
+  #form div{
+    /* border: 1px solid black; */
+    margin: 10px 0;
+  }
+  #conditions{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+  }

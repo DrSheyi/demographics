@@ -1,0 +1,158 @@
+/* eslint-disable */
+// this is an auto generated file. This will be overwritten
+
+export const getDemographics = /* GraphQL */ `
+  query GetDemographics($id: ID!) {
+    getDemographics(id: $id) {
+      id
+      firstName
+      lastName
+      email
+      age
+      consentvalue
+      sex
+      ethnicity
+      education
+      conditions
+      dominantHand
+      suddenDeath
+      marfans
+      cpmmr
+      cpmmr2
+      uptodateVaccines
+      allergies
+      allergiesDescription
+      allergiesepipen
+      medication
+      medicationDescription
+      nonPrescriptionMedication
+      nonPrescriptionMedicationDescription
+      danceHistory
+      danceWork
+      currentCompany
+      previousCompany
+      mainTypeOfDance
+      ageBeganDance
+      trainning
+      pointeWork
+      numberOfYearsDancing
+      numberOfYearsProDancing
+      currentlyPerforming
+      alteredSchedule
+      rehearsalHours
+      dancePerDay
+      performancePerMonth
+      tourWeeks
+      companyEmployedWeeks
+      offseasonTraining
+      extraPrograms
+      cardioTrainingPerWeek
+      crossTrainingPerWeek
+      warmUp
+      musculoskeletalinjury
+      seenBy
+      injuryDiagnosis
+      whereInjuryOccured
+      surgery
+      rehab
+      resumptionDanceClasses
+      returnPerform
+      continuingProblem
+      otherInjuries
+      lossPastYear
+      counseling
+      fatigue
+      troubleSleeping
+      sleepDeprived
+      nutritionCounseling
+      smoking
+      smokingCessation
+      drinksPerDay
+      drugUse
+      worry
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listDemographics = /* GraphQL */ `
+  query ListDemographics(
+    $filter: ModelDemographicsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listDemographics(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        firstName
+        lastName
+        email
+        age
+        consentvalue
+        sex
+        ethnicity
+        education
+        conditions
+        dominantHand
+        suddenDeath
+        marfans
+        cpmmr
+        cpmmr2
+        uptodateVaccines
+        allergies
+        allergiesDescription
+        allergiesepipen
+        medication
+        medicationDescription
+        nonPrescriptionMedication
+        nonPrescriptionMedicationDescription
+        danceHistory
+        danceWork
+        currentCompany
+        previousCompany
+        mainTypeOfDance
+        ageBeganDance
+        trainning
+        pointeWork
+        numberOfYearsDancing
+        numberOfYearsProDancing
+        currentlyPerforming
+        alteredSchedule
+        rehearsalHours
+        dancePerDay
+        performancePerMonth
+        tourWeeks
+        companyEmployedWeeks
+        offseasonTraining
+        extraPrograms
+        cardioTrainingPerWeek
+        crossTrainingPerWeek
+        warmUp
+        musculoskeletalinjury
+        seenBy
+        injuryDiagnosis
+        whereInjuryOccured
+        surgery
+        rehab
+        resumptionDanceClasses
+        returnPerform
+        continuingProblem
+        otherInjuries
+        lossPastYear
+        counseling
+        fatigue
+        troubleSleeping
+        sleepDeprived
+        nutritionCounseling
+        smoking
+        smokingCessation
+        drinksPerDay
+        drugUse
+        worry
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
