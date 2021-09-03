@@ -1,10 +1,10 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createDemographics } from './graphql/mutations'
 import { listDemographics } from './graphql/queries'
 import awsExports from "./aws-exports";
-
+import Submited from './submited';
 
 import {
   Container, 
@@ -24,6 +24,8 @@ import {
   Button,
   Fab
 } from '@material-ui/core'
+import BfaForm from './bfa-form';
+
            
 Amplify.configure(awsExports);
 function App() {
@@ -93,9 +95,14 @@ function App() {
   const [drugUse,setDrugUse] = useState('');
   const [worry,setWorry] = useState('');
   const [itemList,setItemList] = useState('');
+  const [covid,setCovid] = useState('');
+  const [formSubmited,setFormSubmited] = useState(false)
 
   const handleFirstName = (event) => {
     setFirstName(event.target.value);
+  };
+  const handleCovid = (event) => {
+    setCovid(event.target.value);
   };
   const handleLastName = (event) => {
     setLastName(event.target.value);
@@ -393,13 +400,21 @@ function App() {
             "worry":worry,
 
            }
-          await API.graphql(graphqlOperation(createDemographics, {input: form}))
+         try{ await API.graphql(graphqlOperation(createDemographics, {input: form}))} catch (err) {console.log(err)}
+         setFormSubmited(true)
   }
+  const reload=(e)=>{
+    setFormSubmited(false)
+    window.location.reload()
+
+}
+  
   //console.log(itemList)
+  if(formSubmited===false){ 
   return (
     <div className="App">
       <div id="container">
-        
+     
       <form id='form' onSubmit={submitForm}>
       <Typography style={{fontSize:35,fontWeight:900}}>Health Demo Form</Typography>
         <Typography>Enter your First Name:</Typography>
@@ -417,7 +432,6 @@ function App() {
                 Do you consent for your data to be used for research?
         </Typography>
         <FormControl id='consent' component="fieldset">
-        <FormLabel component="legend">Consent</FormLabel>
         <RadioGroup aria-label="Consent" name="consent"  onChange={handleConsent}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -456,13 +470,13 @@ function App() {
       </FormControl>
       {/* {ethnicity==="Other"?<TextField variant="outlined" onChange={handleEthnicity} placeholder="Please List your Ethnicity:"></TextField>:null} */}
       
-      <Typography htmlFor="height">Enter your height (cm)</Typography>
-      <TextField variant="outlined" type="number" id="height"/>
+      {/* <Typography htmlFor="height">Enter your height (cm)</Typography>
+      <TextField variant="outlined" id="height"/>
 
       <Typography htmlFor="weight">Enter your weight (lbs)</Typography>
-      <TextField variant="outlined" type="number" id="weight"/>
+      <TextField variant="outlined" id="weight"/> */}
 
-      <Typography >Select your Education</Typography>
+      {/* <Typography >Select your Education</Typography>
         <FormControl id='Education' variant="outlined" >
         <InputLabel id="demo-simple-select-outlined-label">Education</InputLabel>
         <Select
@@ -475,17 +489,17 @@ function App() {
           <MenuItem value={'High School'}>High School</MenuItem>
           <MenuItem value={'College'}>College</MenuItem>
           <MenuItem value={'Gradauate School'}>Gradauate School</MenuItem>
+          <MenuItem value={'Other'}>Other</MenuItem>
         </Select>
-      </FormControl>
-
+      </FormControl> */}
+{/* 
       <Typography htmlFor="dominantHand">Please Select your Dominant Hand:</Typography>
         <FormControl id='dominantHand' component="fieldset">
-        <FormLabel component="legend">Dominant Hand</FormLabel>
         <RadioGroup aria-label="dominantHand" name="dominantHand"  onChange={handleDominantHand}>
         <FormControlLabel value="right" control={<Radio />} label="Right" />
         <FormControlLabel value="left" control={<Radio />} label="Left" />
         </RadioGroup>
-        </FormControl>
+        </FormControl> */}
 
         <FormControl required id='conditions' component="fieldset">
         <FormLabel component="legend">Please Check all Conditions that Apply to You</FormLabel>
@@ -578,12 +592,10 @@ function App() {
         control={<Checkbox  onChange={handleChangeConditions} name="heat stroke" />} 
         label="Heat Stroke"/>
       </FormGroup>
-      <FormHelperText>You can display an error</FormHelperText>
       </FormControl>
 
       <Typography for="suddenDeath">Do you have any family members or relatives that died of heart problems or sudden death before age 50?</Typography>
         <FormControl id='suddenDeath' component="fieldset">
-        <FormLabel component="legend">Sudden Death</FormLabel>
         <RadioGroup aria-label="suddenDeath" name="suddenDeath"  onChange={handleSuddenDeath}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -592,7 +604,6 @@ function App() {
 
         <Typography for="marfans">Does anyone in your family have Marfans syndrome?</Typography>
         <FormControl id='marfans' component="fieldset">
-        <FormLabel component="legend">Sudden Death</FormLabel>
         <RadioGroup aria-label="marfans" name="marfans"  onChange={handlemarfans}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -601,7 +612,6 @@ function App() {
 
         <Typography for="chickenPox">Have you had Chicken pox, mumps, measles or rubella?</Typography>
         <FormControl id='cpmmr' component="fieldset">
-        <FormLabel component="legend">Chicken Pox, Mumps, Measels or Rubella</FormLabel>
         <RadioGroup aria-label="cpmmr" name="cpmmr"  onChange={handlecpmmr}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -611,7 +621,6 @@ function App() {
 
         <Typography for="cpmmr2">Have you been vaccinated for the ones that you did not have as a child? </Typography>
         <FormControl id='cpmmr2' component="fieldset">
-        <FormLabel component="legend">Have these vaccines?</FormLabel>
         <RadioGroup aria-label="cpmmr2" name="cpmmr2"  onChange={handlecpmmr2}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -619,9 +628,17 @@ function App() {
         </RadioGroup>
         </FormControl>
 
+        
+        <Typography for="covid">Have you been vaccinated for Covid-19? </Typography>
+        <FormControl id='covid' component="fieldset">
+        <RadioGroup aria-label="covid" name="covid"  onChange={handleCovid}>
+        <FormControlLabel value="No" control={<Radio />} label="No" />
+        <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
+        </RadioGroup>
+        </FormControl>
+
         <Typography for="vaccine">Are you up to date on your vaccines?</Typography>
         <FormControl id='uptodateVaccines' component="fieldset">
-        <FormLabel component="legend">Have these vaccines?</FormLabel>
         <RadioGroup aria-label="uptodateVaccines" name="Up to date Vaccines?"  onChange={handleUpToDateVaccines}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -631,7 +648,6 @@ function App() {
 
         <Typography htmlFor="allergies">Do you have any allergies to medications, foods, or environmental agents?</Typography>
         <FormControl id='allergies' component="fieldset">
-        <FormLabel component="legend">Allergies?</FormLabel>
         <RadioGroup aria-label="allergies" name="Allergies"  onChange={handleAllergies}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -641,7 +657,6 @@ function App() {
           
         <Typography for="vaccine">Do you need an epi-pen for these allergies?</Typography>
         <FormControl id='allergiesepipen' component="fieldset">
-        <FormLabel component="legend">Epi-pen Medication?</FormLabel>
         <RadioGroup aria-label="allergiesepipen" name="allergies epi-pen"  onChange={handleAllergiesEpiPen}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -650,7 +665,6 @@ function App() {
 
         <Typography htmlFor="allergies">Are you currently taking any prescription medication?</Typography>
         <FormControl id='medication' component="fieldset">
-        <FormLabel component="legend">Medication?</FormLabel>
         <RadioGroup aria-label="medication" name="medication"  onChange={handleMedication}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -660,7 +674,6 @@ function App() {
 
         <Typography htmlFor="nonMedication">Do you regularly take any non-prescription medications, vitamins, supplements?</Typography>
         <FormControl id='nonMedication' component="fieldset">
-        <FormLabel component="legend">Non-Prescription Medication?</FormLabel>
         <RadioGroup aria-label="nonMedication" name="nonMedication"  onChange={handlenonMedication}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -706,7 +719,6 @@ function App() {
           />
           
       </FormGroup>
-      <FormHelperText>You can display an error</FormHelperText>
       </FormControl>
 
       <Typography htmlFor="dance-performance-history">Type of Dance Work</Typography>
@@ -737,10 +749,25 @@ function App() {
         <Typography>Previous Company or School Name:</Typography>
         <TextField  label="Previous Company" variant="outlined" onChange={handlePreviousCompany}/>
          
+        <Typography>preffered gesture leg</Typography>
+        <FormControl id='preffered gesture leg' component="fieldset">
+        <RadioGroup aria-label="preffered gesture leg" name="preffered gesture leg"  >
+        <FormControlLabel value="right" control={<Radio />} label="Right" />
+        <FormControlLabel value="left" control={<Radio />} label="Left" />
+        </RadioGroup>
+        </FormControl>
+        
+      <Typography>preffere stance leg</Typography>
+        <FormControl id='preffere stance leg' component="fieldset">
+        <RadioGroup aria-label="preffere stance leg" name="preffere stance leg"  >
+        <FormControlLabel value="right" control={<Radio />} label="Right" />
+        <FormControlLabel value="left" control={<Radio />} label="left" />
+        </RadioGroup>
+        </FormControl>
+        
 
         
       </FormGroup>
-      <FormHelperText>You can display an error</FormHelperText>
       </FormControl>
 
       <Typography for="training">Main Type of Dance Training</Typography>
@@ -760,15 +787,13 @@ function App() {
         <FormControlLabel control={<Checkbox onChange={handleMainTypeOfDance} name="hipHop" />} label="HipHop"/>
         <FormControlLabel control={<Checkbox onChange={handleMainTypeOfDance} name="ballroom" />} label="Ballroom"/>
         </FormGroup>
-      <FormHelperText>You can display an error</FormHelperText>
       </FormControl>
 
       <Typography for="beganTraining">Age began dance training?</Typography>
-      <TextField type="number" variant="outlined" id="beganTraining" onChange={handleAgeBeganDance}/>
+      <TextField variant="outlined" id="beganTraining" onChange={handleAgeBeganDance}/>
 
       <Typography >Has your training been continuous?</Typography>
       <FormControl id='trainning' component="fieldset">
-        <FormLabel component="legend">Continuous Trainning?</FormLabel>
         <RadioGroup aria-label="trainning" name="Continuous trainning"  onChange={handleTrainning}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -777,7 +802,6 @@ function App() {
 
         <Typography >Do you do pointe work?</Typography>
       <FormControl id='pointeWork' component="fieldset">
-        <FormLabel component="legend">Pointe Work?</FormLabel>
         <RadioGroup aria-label="pointe work" name="Pointe Work"  onChange={handlePointeWork}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -785,13 +809,12 @@ function App() {
         </FormControl>
 
         <Typography for="numberOfYearsDancing">Total Number of Years Dancing?</Typography>
-        <TextField variant="outlined" type="number" id="numberOfYearsDancing" onChange={handleNumberOfYearsDancing}/>
+        <TextField variant="outlined" id="numberOfYearsDancing" onChange={handleNumberOfYearsDancing}/>
 
         <Typography for="numberOfYearsDancing">Number of Years as a Professional Dancing?</Typography>
-        <TextField variant="outlined" type="number" id="numberOfYearsProDancing"onChange={handleNumberOfYearsProDancing} />
+        <TextField variant="outlined" id="numberOfYearsProDancing"onChange={handleNumberOfYearsProDancing} />
 
       <FormControl id='currentlyPerforming' component="fieldset">
-        <FormLabel component="legend">Currently Performing?</FormLabel>
         <RadioGroup aria-label="currentlyPerforming" name="Currently performing"  onChange={handleCurrentlyPerforming}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -799,23 +822,22 @@ function App() {
         </FormControl>
 
         <Typography for="rehearsalHours">Number of hours of rehearsal per day?</Typography>
-            <TextField variant="outlined" type="number" id="rehearsalHours" onChange={handleRehearsalHours}/>
+            <TextField variant="outlined" id="rehearsalHours" onChange={handleRehearsalHours}/>
 
             <Typography for="dancePerDay">Number of dance classes per day?</Typography>
-            <TextField variant="outlined" type="number" id="dancePerDay"onChange={handleDancePerDay}/>
+            <TextField variant="outlined" id="dancePerDay"onChange={handleDancePerDay}/>
 
             <Typography for="performancePerMonth">Number of performances per month?</Typography>
-            <TextField variant="outlined" type="number" id="performancesPerMonth" onChange={handlePerformancePerMonth}/>
+            <TextField variant="outlined" id="performancesPerMonth" onChange={handlePerformancePerMonth}/>
 
             <Typography for="tourWeeks">Number of weeks per year on tour?</Typography>
-            <TextField variant="outlined" type="number" id="tourWeeks" onChange={handleTourWeeks}/>
+            <TextField variant="outlined" id="tourWeeks" onChange={handleTourWeeks}/>
 
             <Typography for="companyEmployedWeeks">If you are in a company, what is the number of weeks you are employed per contract year?</Typography>
-            <TextField variant="outlined" type="number" id="companyEmployedWeeks" onChange={handleCompanyEmployedWeeks}/>
+            <TextField variant="outlined" id="companyEmployedWeeks" onChange={handleCompanyEmployedWeeks}/>
 
         <Typography >Have you altered your dance schedule in the last 6 months</Typography>
         <FormControl id='alterSchedule' component="fieldset">
-        <FormLabel component="legend">Changed Dance Schedule?</FormLabel>
         <RadioGroup aria-label="altered schedule" name="alteredSchedule"  onChange={handleAlteredSchedule}>
         <FormControlLabel control={<Radio />}  label="No Change" value="No Change"        />
         <FormControlLabel control={<Radio />}  label="Gradual Increase" value="Gradual Increase" />
@@ -851,18 +873,17 @@ function App() {
           <FormControlLabel control={<Checkbox onChange={handleExtraPrograms} name="pilates"  />}              label="pilates"   /> 
           <FormControlLabel control={<Checkbox onChange={handleExtraPrograms} name="Other"   />}               label="Other"    /> 
         </FormGroup>
-        <FormHelperText>You can display an error</FormHelperText>
+
         </FormControl>
         
         <Typography for="cardioTrainingPerWeek">Current number hrs/wk of cardiovascular training</Typography>
-            <TextField variant="outlined" type="number" id="cardioTrainingPerWeek" onChange={handleCardioTrainingPerWeek}/>    
+            <TextField variant="outlined" id="cardioTrainingPerWeek" onChange={handleCardioTrainingPerWeek}/>    
         <Typography for="crossTrainingPerWeek">Current number hrs/wk other cross-training</Typography>
-            <TextField variant="outlined" type="number" id="crossTrainingPerWeek" onChange={handleCrossTrainingPerWeek}/>
+            <TextField variant="outlined" id="crossTrainingPerWeek" onChange={handleCrossTrainingPerWeek}/>
 
         
         <Typography for="warmUp">Do you warm up before class?</Typography>
         <FormControl id='warmUp' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="warmUp" name="warmUp"  onChange={handleWarmUP}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -871,7 +892,6 @@ function App() {
 
         <Typography >Have you sustained any musculoskeletal injuries in the last 12 months that caused you to miss:</Typography>
         <FormControl id='musculoskeletalinjury' component="fieldset">
-        <FormLabel component="legend">Changed Dance Schedule?</FormLabel>
         <RadioGroup aria-label="musculoskeletalinjury" name="musculoskeletalinjury"  onChange={handleMuscleInjury}>
         <FormControlLabel control={<Radio/>} value="Performance"label="Performance" />
         <FormControlLabel control={<Radio/>} value="Rehearsal"  label="Rehearsal"  />
@@ -907,7 +927,6 @@ function App() {
 
         <Typography >Where did the injury occur?</Typography>
         <FormControl id='whereInjuryOccured' component="fieldset">
-        <FormLabel component="legend">Changed Dance Schedule?</FormLabel>
         <RadioGroup aria-label="whereInjuryOccured" name="whereInjuryOccured"  onChange={handleWhereInjuryOccured}>
         <FormControlLabel control={<Radio/>} value="Performance"label="Performance" />
         <FormControlLabel control={<Radio/>} value="Rehearsal"  label="Rehearsal"  />
@@ -920,7 +939,6 @@ function App() {
 
         <Typography for="surgery">Did you have surgery for the injury mentioned above?</Typography>
         <FormControl id='surgery' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="surgery" name="surgery"  onChange={handleSurgery}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -929,7 +947,6 @@ function App() {
 
         <Typography for="rehab">Did you receive any rehabilitation for injuries sustained?</Typography>
         <FormControl id='rehab' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="rehab" name="rehab"  onChange={handleRehab}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -939,12 +956,11 @@ function App() {
         <Typography for="resumptionDanceClasses">Date of resumption of dance classes?</Typography>
         <TextField variant="outlined" type="date" id="resumptionDanceClasses" onChange={handleResumptionDanceClasses}/>
 
-        <Typography for="returnPerform">Date of resumption of dance classes?</Typography>
+        <Typography for="returnPerform">Date of Performance resumption?</Typography>
         <TextField variant="outlined" type="date" id="returnPerform" onChange={handleReturnPerform}/>
 
         <Typography for="continuingProblem">Are there any continuing problems due to your injury?</Typography>
         <FormControl id='continuingProblem' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="continuingProblem" name="continuingProblem"  onChange={handleContinuingProblem}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -953,7 +969,6 @@ function App() {
 
         <Typography for="otherInjuries">Have you had any other injuries or surgeries that you would like us to know about?</Typography>
         <FormControl id='otherInjuries' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="otherInjuries" name="otherInjuries"  onChange={handleOtherInjuries}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -963,7 +978,6 @@ function App() {
         <Typography for="lossPastYear">In the past year, have you had a loss of friend(s), or family, or partner/spouse, or pet through
                 death, separation, change in relationship or relocation?</Typography>
         <FormControl id='lossPastYear' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="lossPastYear" name="lossPastYear"  onChange={handleLossPastYear}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -972,7 +986,6 @@ function App() {
 
         <Typography for="counseling">Do you feel you would benefit from counseling for the above or mental/emotional  stress or anxiety?</Typography>
         <FormControl id='counseling' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="counseling" name="counseling"  onChange={handleCounseling}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -981,7 +994,6 @@ function App() {
 
         <Typography for="fatigue">Do you feel you suffer from bouts of fatigue or tiredness more than your fellow dancers?</Typography>
         <FormControl id='fatigue' component="fatigue">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="fatigue" name="fatigue"  onChange={handleFatigue}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -990,7 +1002,6 @@ function App() {
 
         <Typography for="troubleSleeping">Do you have trouble falling asleep or getting back to sleep if you wake in the night?</Typography>
         <FormControl id='troubleSleeping' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="troubleSleeping" name="troubleSleeping"  onChange={handleTroubleSleeping}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -1000,7 +1011,6 @@ function App() {
 
         <Typography for="sleepDeprived">Do you consider yourself sleep deprived?</Typography>
         <FormControl id='sleepDeprived' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="sleepDeprived" name="sleepDeprived"  onChange={handleSleepDeprived}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -1009,7 +1019,6 @@ function App() {
 
         <Typography for="nutritionCounseling">Are you interested in nutritional counseling?</Typography>
         <FormControl id='nutritionCounseling' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="nutritionCounseling" name="nutritionCounseling"  onChange={handleNutritionCounseling}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -1018,7 +1027,6 @@ function App() {
 
         <Typography for="smoking">Do you smoke cigarettes?</Typography>
         <FormControl id='smoking' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="smoking" name="smoking"  onChange={handleSmoking}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -1028,7 +1036,6 @@ function App() {
 
         <Typography for="smokingCessation">Are you interested in smoking cessation information?</Typography>
         <FormControl id='smokingCessation' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="smokingCessation" name="smokingCessation"  onChange={handleSmokingCessation}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -1036,24 +1043,36 @@ function App() {
         </FormControl>
 
         <Typography for="drinksPerDay">On average how many alcoholic drinks do you drink in a day?</Typography>
-        <TextField variant="outlined" type="number" id="drinksPerDay" onChange={handleDrinksPerDay}/>
+        <TextField variant="outlined" id="drinksPerDay" onChange={handleDrinksPerDay}/>
 
         <Typography for="drugUse">How many times in a week do you use drugs or medications for non-medical reasons? (example marijuana)</Typography>
-        <TextField variant="outlined" type="number" id="drugUse" onChange={handleDrugUse}/>
+        <TextField variant="outlined" id="drugUse" onChange={handleDrugUse}/>
 
         <Typography for="worry">Do you worry about any aspect of your health?</Typography>
         <FormControl id='worry' component="fieldset">
-        <FormLabel component="legend"></FormLabel>
         <RadioGroup aria-label="worry" name="worry"  onChange={handleWorry}>
         <FormControlLabel value="No" control={<Radio />} label="No" />
         <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
         </RadioGroup>
         </FormControl>
-        <Fab style={{margin:"15px"}} variant="extended" color="primary"><Button type='submit'>SUBMIT</Button></Fab>
+        <Fab style={{margin:"15px"}} variant="extended" color="primary"><Button type='submit' style={{color:"#fff"}}>SUBMIT</Button></Fab>
       </form>
       </div>
     </div>
-  );
+    );
+      }
+      else{
+      
+      return (
+        <div style={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:'column',padding:'20px',height:'95vh'}}>
+          <Submited/>
+          <Fab color="primary" variant="extended"><Button style={{color:"#fff"}} onClick={reload}>Go back to Form</Button></Fab>
+        </div>
+      );
+      }
+      
+    
+  
 }
 
 export default App;
